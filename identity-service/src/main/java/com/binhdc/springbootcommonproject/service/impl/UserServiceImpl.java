@@ -1,6 +1,7 @@
 package com.binhdc.springbootcommonproject.service.impl;
 
 //import com.binhdc.springbootcommonproject.constant.PredefinedRole;
+import com.binhdc.springbootcommonproject.client.ProfileClient;
 import com.binhdc.springbootcommonproject.constant.PredefinedRole;
 import com.binhdc.springbootcommonproject.dto.request.UserCreationRequest;
 import com.binhdc.springbootcommonproject.dto.request.UserUpdateRequest;
@@ -10,12 +11,14 @@ import com.binhdc.springbootcommonproject.entity.Role;
 import com.binhdc.springbootcommonproject.entity.User;
 import com.binhdc.springbootcommonproject.exception.AppException;
 import com.binhdc.springbootcommonproject.exception.ErrorCode;
+import com.binhdc.springbootcommonproject.mapper.ProfileMapper;
 import com.binhdc.springbootcommonproject.mapper.RoleMapper;
 import com.binhdc.springbootcommonproject.mapper.UserMapper;
 import com.binhdc.springbootcommonproject.repository.RoleRepository;
 import com.binhdc.springbootcommonproject.repository.UserRepository;
 import com.binhdc.springbootcommonproject.service.UserService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +34,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+//@AllArgsConstructor
 //@EnableMethodSecurity // bật tính năng method security
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepository userRepository;
@@ -40,6 +44,8 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleMapper roleMapper;
+    private final ProfileMapper profileMapper;
+    private final ProfileClient profileClient;
 
     public UserResponse createUser(UserCreationRequest request) {
         User user = userMapper.toUser(request);
@@ -57,6 +63,11 @@ public class UserServiceImpl implements UserService {
 
         try {
             user = userRepository.save(user);
+
+            var profileRequest = profileMapper.toProfileCreationRequest(request);
+            profileRequest.setUserId(String.valueOf(user.getId()));
+
+            profileClient.createProfile(profileRequest);
         } catch (DataIntegrityViolationException exception) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
