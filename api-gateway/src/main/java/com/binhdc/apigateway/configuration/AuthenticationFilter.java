@@ -42,7 +42,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     private String[] PUBLIC_ENDPOINTS = {
             // Tat ca cac API có path /identity/auth/... se pass qua qua trinh authentication.
             "/identity/auth/.*",
-            "/identity/users"
+            "/identity/users/registration"
     };
 
     @Value("${app.api-prefix}")
