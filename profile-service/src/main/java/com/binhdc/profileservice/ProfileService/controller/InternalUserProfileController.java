@@ -1,5 +1,6 @@
 package com.binhdc.profileservice.ProfileService.controller;
 
+import com.binhdc.profileservice.ProfileService.dto.ApiResponse;
 import com.binhdc.profileservice.ProfileService.dto.request.ProfileCreationRequest;
 import com.binhdc.profileservice.ProfileService.dto.response.UserProfileResponse;
 import com.binhdc.profileservice.ProfileService.service.UserProfileService;
@@ -15,8 +16,10 @@ public class InternalUserProfileController {
     UserProfileService userProfileService;
 
     @PostMapping("/internal/users")
-    UserProfileResponse createProfile(@RequestBody ProfileCreationRequest request) {
-        return userProfileService.createProfile(request);
+    ApiResponse<UserProfileResponse> createProfile(@RequestBody ProfileCreationRequest request) {
+        return ApiResponse.<UserProfileResponse>builder()
+                .result(userProfileService.createProfile(request))
+                .build();
     }
 
 //    @GetMapping("/users/{profileId}")
