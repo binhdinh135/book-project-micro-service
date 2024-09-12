@@ -32,7 +32,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping("/registration")
     ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
 //        if (bindingResult.hasErrors()) {
 //            ApiResponse apiResponse = new ApiResponse();
