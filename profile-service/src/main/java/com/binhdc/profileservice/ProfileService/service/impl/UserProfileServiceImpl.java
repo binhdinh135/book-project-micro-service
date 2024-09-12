@@ -12,6 +12,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -36,4 +39,16 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         return userProfileMapper.toUserProfileResponse(userProfile);
     }
+
+    @Override
+    public List<UserProfileResponse> getAllProfile() {
+        List<UserProfile> userProfiles = userProfileRepository.findAll();
+        List<UserProfileResponse> result = new ArrayList<>();
+        userProfiles.forEach(
+                userProfile -> result.add(userProfileMapper.toUserProfileResponse(userProfile))
+        );
+        return result;
+    }
+
+
 }
