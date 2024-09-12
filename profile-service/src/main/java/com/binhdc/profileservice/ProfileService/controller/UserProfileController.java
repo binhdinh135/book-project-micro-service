@@ -1,11 +1,13 @@
 package com.binhdc.profileservice.ProfileService.controller;
 
+import com.binhdc.profileservice.ProfileService.dto.ApiResponse;
 import com.binhdc.profileservice.ProfileService.dto.request.ProfileCreationRequest;
 import com.binhdc.profileservice.ProfileService.dto.response.UserProfileResponse;
 import com.binhdc.profileservice.ProfileService.service.UserProfileService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,13 +23,19 @@ public class UserProfileController {
 //        return userProfileService.createProfile(request);
 //    }
 
+
     @GetMapping("/users/{profileId}")
-    UserProfileResponse getProfile(@PathVariable String profileId) {
-        return userProfileService.getProfile(profileId);
+    ApiResponse<UserProfileResponse> getProfile(@PathVariable String profileId) {
+        return ApiResponse.<UserProfileResponse>builder()
+                .result(userProfileService.getProfile(profileId))
+                .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
-    List<UserProfileResponse> getAllProfile() {
-        return userProfileService.getAllProfile();
+    ApiResponse<List<UserProfileResponse>> getAllProfiles() {
+        return ApiResponse.<List<UserProfileResponse>>builder()
+                .result(userProfileService.getAllProfile())
+                .build();
     }
 }
