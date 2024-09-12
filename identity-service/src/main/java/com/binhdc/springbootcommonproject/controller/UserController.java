@@ -62,6 +62,7 @@ public class UserController {
                 .result(userService.getUsers())
                 .build();
     }
+
     @PreAuthorize("hasRole('ADMIN')")
 //    @PreAuthorize("hasAuthority('APPROVE_POST')")
     @GetMapping("/get-all-user-other-service")
