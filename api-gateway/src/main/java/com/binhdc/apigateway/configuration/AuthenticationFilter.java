@@ -6,20 +6,25 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -32,9 +37,27 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     IdentityService identityService;
     ObjectMapper objectMapper;
 
+
+    @NonFinal
+    private String[] PUBLIC_ENDPOINTS = {
+            // Tat ca cac API có path /identity/auth/... se pass qua qua trinh authentication.
+            "/identity/auth/.*",
+            "/identity/users"
+    };
+
+    @Value("${app.api-prefix}")
+    @NonFinal
+    private String apiPrefix;
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         log.info("Enter authentication filter....");
+
+        // Kiem tra xem API hien tai dang request toi API gateway co phai la Public endpint hay khong?
+        // 1 - Neu la Public endpoint vi du: tao token, tao tai khoan, log-out,... se pass qua.
+        // 2 - Neu khong phai public endpoint chung ta se check authentication nhu binh thuong.
+        if (isPublicEndpoint(exchange.getRequest()))
+            return chain.filter(exchange);
 
         // Get token from authorization header
         // Lay token tu authorization header.
@@ -67,6 +90,15 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         // Set -1 de dam bao rang filter cua chung ta co do uu tien cao
         // truoc khi chay vao cac filter khac trong API Gateway filters.
         return -1;
+    }
+
+    private boolean isPublicEndpoint(ServerHttpRequest request) {
+//        return Arrays.stream(PUBLIC_ENDPOINTS).anyMatch(
+//                s -> (apiPrefix + s).equalsIgnoreCase(request.getRequest().getPath().value())
+//        );
+        return Arrays.stream(PUBLIC_ENDPOINTS).anyMatch(
+                s -> request.getURI().getPath().matches(apiPrefix + s)
+        );
     }
 
     Mono<Void> unauthenticated(ServerHttpResponse response) {
