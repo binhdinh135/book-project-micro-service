@@ -17,6 +17,8 @@ import com.binhdc.springbootcommonproject.mapper.UserMapper;
 import com.binhdc.springbootcommonproject.repository.RoleRepository;
 import com.binhdc.springbootcommonproject.repository.UserRepository;
 import com.binhdc.springbootcommonproject.service.UserService;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -29,6 +31,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -67,7 +71,22 @@ public class UserServiceImpl implements UserService {
             var profileRequest = profileMapper.toProfileCreationRequest(request);
             profileRequest.setUserId(String.valueOf(user.getId()));
 
+            /*
+            Authentication khi gui mot request tu service Identity sang service Profile.
+            Cach lam thu cong, moi lan gui request, chung ta get token tu Servlet request.
+            Sau do token se duoc by pass toi Profile service de authentication, authorization.
+             */
+//            ServletRequestAttributes servletRequestAttributes =
+//                    (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+//
+//            var authHeader = servletRequestAttributes.getRequest().getHeader("Authorization");
+//
+//            log.info("Header: {} ", authHeader);
+//
+//            profileClient.createProfile(authHeader, profileRequest);
+
             profileClient.createProfile(profileRequest);
+
         } catch (DataIntegrityViolationException exception) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
