@@ -1,6 +1,6 @@
 package com.notificatiomservice.NotificationService.exception;
 
-import com.notificatiomservice.NotificationService.dto.ApiResponse;
+import com.notificatiomservice.NotificationService.dto.response.ApiResponse;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

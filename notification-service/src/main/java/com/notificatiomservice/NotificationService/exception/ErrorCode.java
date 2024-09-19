@@ -15,7 +15,8 @@ public enum ErrorCode {
     UNAUTHENTICATED(401, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(403, "You do not have permission", HttpStatus.FORBIDDEN),
     INVALID_DOB(1008, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
-    CLIENT_NOT_EXISTED(1006, "Client id is not existed", HttpStatus.NOT_FOUND)
+    CLIENT_NOT_EXISTED(1006, "Client id is not existed", HttpStatus.NOT_FOUND),
+    CANNOT_SEND_EMAIL(1001, "Can not send the email", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

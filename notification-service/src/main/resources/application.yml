@@ -8,3 +8,7 @@ spring:
 data:
   mongodb:
     uri : mongodb://root:root@localhost:27017/notification-service?authSource=admin
+
+brevo:
+#  chung ta se dien api key cua minh vao day
+   key: your api key
