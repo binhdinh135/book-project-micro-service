@@ -2,7 +2,7 @@ package com.notificatiomservice.NotificationService.configuration;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.notificatiomservice.NotificationService.dto.ApiResponse;
+import com.notificatiomservice.NotificationService.dto.response.ApiResponse;
 import com.notificatiomservice.NotificationService.exception.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
